@@ -99,9 +99,9 @@ class CPU:
                 print(f"Printing: {self.ram[self.ram[IR + 1]]}")
                 IR += 2
 
-            # elif self.ram[IR] == HLT:
-            #     running = False
-            #     sys.exit(1)
+            elif self.ram[IR] == HLT:
+                running = False
+                sys.exit(1)
             
             # else:
             #     print(f"Error: Unknown command: {command}")
