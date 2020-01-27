@@ -66,7 +66,7 @@ class CPU:
         return self.ram[value]
 
     def ram_write(self, address, value):
-        return self.ram[address] = value
+        self.ram[address] = value
 
     def run(self):
         """Run the CPU."""
@@ -101,8 +101,9 @@ class CPU:
 
             elif self.ram[IR] == HLT:
                 running = False
-                sys.exit(1)
+                print(f"HALT! No more running - end")
             
-            # else:
-            #     print(f"Error: Unknown command: {command}")
-            #     sys.exit(1)
+            else:
+                print(f"Error: Unknown command: {command}")
+                sys.exit(1)
+                # IR += 1
