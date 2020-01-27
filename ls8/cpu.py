@@ -70,4 +70,39 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        pass
+
+        # load program into memory
+        self.load()
+
+        # initialize variables for easy call distinction below
+        LDI = 0b10000010
+        PRN = 0b01000111
+        HLT = 0b00000001
+        IR = self.pc
+
+        operand_a = self.ram_read(IR + 1)
+        operand_b = self.ram_read(IR + 2)
+
+        running = True
+
+        while running:
+            # execute instructions
+            
+            if self.ram[IR] == LDI:
+                # set value of operand_b into operand_a
+                self.ram_write(operand_a, operand_b)
+                # increase IR by 3
+                IR += 3
+            
+            elif self.ram[IR] == PRN:
+                # print and increment
+                print(f"Printing: {self.ram[self.ram[IR + 1]]}")
+                IR += 2
+
+            # elif self.ram[IR] == HLT:
+            #     running = False
+            #     sys.exit(1)
+            
+            # else:
+            #     print(f"Error: Unknown command: {command}")
+            #     sys.exit(1)
