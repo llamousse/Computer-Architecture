@@ -92,7 +92,10 @@ class CPU:
         PRN = 0b01000111
         HLT = 0b00000001
         MUL = 0b10100010
+        PUSH = 0b01000101
+        POP = 0b01000110
         IR = self.pc
+        SP = 243
 
         running = True
 
@@ -117,6 +120,27 @@ class CPU:
                 print(f"MUL: {self.ram_read(operand_a)} * {self.ram_read(operand_b)}")
                 self.ram_write(operand_a, val)
                 IR += 3
+            
+            elif self.ram[IR] == PUSH:
+                # decrement SP
+                SP -= 1
+                # copy value in the given register to the address pointed to
+                # by SP
+                item = self.ram_read(operand_a)
+                self.ram_write(SP, item)
+                # increment IR by 2
+                IR += 2
+
+            
+            elif self.ram[IR] == POP:
+                # pop value at the top of the stack into given register
+                item = self.ram_read(SP)
+                # copy value from address pointed to by SP
+                self.ram_write(operand_a, item)
+                # increment SP
+                SP += 1
+                # increment IR by 2
+                IR += 2
 
             elif self.ram[IR] == HLT:
                 running = False

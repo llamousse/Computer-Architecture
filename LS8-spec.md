@@ -224,7 +224,7 @@ Machine code:
 50 0r
 ```
 
-### CMP
+### CMP (Compare)
 
 *This is an instruction handled by the ALU.*
 
