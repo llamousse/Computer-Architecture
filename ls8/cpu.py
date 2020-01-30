@@ -147,10 +147,14 @@ class CPU:
 
             elif self.ram[IR] == CALL:
                 SP -= 1
+                # write address of SP = IR
                 self.ram_write(SP, IR)
+                # set IR to RAM value of register operand_a
                 IR = self.ram_read(operand_a)
 
             elif self.ram[IR] == RET:
+                # set instruction register to the ram value of 
+                # SP (stack pointer) incr by 2
                 IR = self.ram_read(SP) + 2
 
             elif self.ram[IR] == ADD:
