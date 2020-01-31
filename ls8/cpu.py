@@ -94,6 +94,9 @@ class CPU:
         MUL = 0b10100010
         PUSH = 0b01000101
         POP = 0b01000110
+        CALL = 0b01010000
+        RET = 0b00010001
+        ADD = 0b10100000
         IR = self.pc
         SP = 243
 
@@ -141,6 +144,25 @@ class CPU:
                 SP += 1
                 # increment IR by 2
                 IR += 2
+
+            elif self.ram[IR] == CALL:
+                SP -= 1
+                # write address of SP = IR
+                self.ram_write(SP, IR)
+                # set IR to RAM value of register operand_a
+                IR = self.ram_read(operand_a)
+
+            elif self.ram[IR] == RET:
+                # set instruction register to the ram value of 
+                # SP (stack pointer) incr by 2
+                IR = self.ram_read(SP) + 2
+
+            elif self.ram[IR] == ADD:
+                # add value of two registers: operand_a + operand_b
+                total_value = self.ram_read(operand_a) + self.ram_read(operand_b)
+                # store result in registerA: operand_a
+                self.ram_write(operand_a, total_value)
+                IR += 3
 
             elif self.ram[IR] == HLT:
                 running = False
