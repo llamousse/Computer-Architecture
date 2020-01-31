@@ -63,7 +63,7 @@ class CPU:
 
         print(f"TRACE: %02X | %02X %02X %02X |" % (
             self.pc,
-            #self.fl,
+            self.fl,
             #self.ie,
             self.ram_read(self.pc),
             self.ram_read(self.pc + 1),
@@ -97,6 +97,8 @@ class CPU:
         CALL = 0b01010000
         RET = 0b00010001
         ADD = 0b10100000
+        CMP = 0b10100111
+
         IR = self.pc
         SP = 243
 
@@ -163,6 +165,17 @@ class CPU:
                 # store result in registerA: operand_a
                 self.ram_write(operand_a, total_value)
                 IR += 3
+            
+            elif self.ram[IR] == CMP:
+                # compare values in two registers
+                # if values are equal, set 'E' equal flag to 1
+                # otherwise, set it to 0
+
+                # if regA < regB, set Less-Than 'L' flag to 1
+                # otherwise, set it to 0
+
+                # regA > regB, set Greater-Than 'G' flag to 1
+                # otherwise set it to 0
 
             elif self.ram[IR] == HLT:
                 running = False
