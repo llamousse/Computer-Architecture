@@ -10,6 +10,7 @@ class CPU:
         self.pc = 0 # program counter
         self.register = [0] * 8
         self.ram = [0] * 256
+        self.flag = [0] * 3 # flag for CMP (LT, GT, E)
 
     def load(self):
         """Load a program into memory."""
@@ -63,7 +64,7 @@ class CPU:
 
         print(f"TRACE: %02X | %02X %02X %02X |" % (
             self.pc,
-            #self.fl,
+            self.fl,
             #self.ie,
             self.ram_read(self.pc),
             self.ram_read(self.pc + 1),
@@ -97,6 +98,11 @@ class CPU:
         CALL = 0b01010000
         RET = 0b00010001
         ADD = 0b10100000
+        CMP = 0b10100111
+        JMP = 0b01010110
+        JEQ = 0b01010101
+        JNE = 0b01010110
+
         IR = self.pc
         SP = 243
 
@@ -163,6 +169,55 @@ class CPU:
                 # store result in registerA: operand_a
                 self.ram_write(operand_a, total_value)
                 IR += 3
+            
+            elif self.ram[IR] == CMP:
+                # compare values in two registers
+                # if values are equal, set 'E' equal flag to 1
+                # otherwise, set it to 0
+                if self.ram_read(operand_a) == self.ram_read(operand_b):
+                    self.flag[0] = 0    # 3 = Less Than flag
+                    self.flag[1] = 0    # 4 = Greater Than flag
+                    self.flag[2] = 1    # 5 = Equal flag
+                
+                # regA > regB, set Greater-Than 'G' flag to 1
+                # otherwise set it to 0
+                elif self.ram_read(operand_a) > self.ram_read(operand_b):
+                    self.flag[0] = 0
+                    self.flag[1] = 1
+                    self.flag[2] = 0
+
+                # if regA < regB, set Less-Than 'L' flag to 1
+                # otherwise, set it to 0
+                elif self.ram_read(operand_a) < self.ram_read(operand_b):
+                    self.flag[0] = 1
+                    self.flag[1] = 0
+                    self.flag[2] = 0
+                
+                # increase IR by 3
+                IR += 3
+            
+            elif self.ram[IR] == JMP:
+                # if 'E' flag is clear (false, 0) - jump to address stored
+                # in given register
+                if self.flag[2] == 0:
+                    IR = self.ram_read(operand_a)
+                else:
+                    IR += 2
+
+            elif self.ram[IR] == JEQ:
+                # if equal flag == true, jump to address stored in register
+                if self.flag[2] == 1:
+                    IR = self.ram_read(operand_a)
+                else:
+                    IR += 2
+
+            elif self.ram[IR] == JNE:
+                # if E flag is clear/false, jump to address stored in 
+                # the given register
+                if self.flag[2] == 0:
+                    IR = self.ram_read(operand_a)
+                else:
+                    IR += 2
 
             elif self.ram[IR] == HLT:
                 running = False
